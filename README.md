@@ -8,3 +8,14 @@
    2. plugins (artifactId):
       1. spring-boot-maven-plugin
       2. lombok
+2. Commit - Create directory "entity" and class "Product": 
+   1. add annotation in class Product from lombok:
+      1. @Data
+      2. @NoArgsConstructor
+      3. @AllArgsConstructor
+   2. add fields in class Product:
+      1. name
+      2. description
+      3. price
+      4. inStock
+3. 
