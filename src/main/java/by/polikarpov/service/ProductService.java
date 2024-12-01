@@ -1,6 +1,6 @@
 package by.polikarpov.service;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class ProductService {
      *
      * @return список продуктов
      */
-    public List<Product> getAllProducts() {
-        return productRepository.getListProducts();
+    public List<Products> getAllProducts() {
+        return productRepository.findAll();
     }
 
     /**
@@ -41,51 +41,44 @@ public class ProductService {
      * @return продукт
      * @throws EntityException если продукт не найден
      */
-    public Product getProductById(int id) throws EntityException {
-        return productRepository.getProductById(id)
+    public Products getProductById(int id) throws EntityException {
+        return productRepository.findById(id)
                 .orElseThrow(() -> new EntityException("Продукта по данному id не существует."));
     }
 
     /**
      * Создает новый продукт.
      *
-     * @param product продукт для создания
+     * @param products продукт для создания
      * @return сообщение об успешном создании продукта
      * @throws EntityException если продукт пустой или уже существует
      */
-    public Product createProduct(Product product) throws EntityException {
-        if (product == null) {
+    public Products createProduct(Products products) throws EntityException {
+        if (products == null) {
             throw new EntityException("Продукт не может быть пустым");
         }
 
-        int result = productRepository.addProduct(product);
-        if (result != -1) {
-            return getProductById(result);
-        }
+        return productRepository.save(products);
 
-        throw new EntityException("Продукт не был создан, возможны две причины: "
-                                  + "он уже был добавлен в хранилище, либо передан null");
     }
 
     /**
      * Обновляет информацию о существующем продукте.
      *
      * @param product новый продукт с обновленной информацией
-     * @param id      идентификатор продукта для обновления
      * @return сообщение об успешном обновлении продукта
      * @throws EntityException если продукт не найден или новый продукт пустой
      */
-    public String updateProduct(Product product, int id) throws EntityException {
+    public String updateProduct(Products product) throws EntityException {
         if (product == null) {
             throw new EntityException("Невозможно обновить продукт: новый продукт не может быть пустым.");
         }
 
-        Product existingProduct = getProductById(id);
-        existingProduct.setName(product.getName());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setInStock(product.isInStock());
+        if (!productRepository.existsById(product.getId())){
+            throw new EntityException("Продукта с данным id не существует.");
+        }
 
+        productRepository.save(product);
         return "Продукт успешно обновлен";
 
     }
@@ -98,11 +91,11 @@ public class ProductService {
      * @throws EntityException если продукт не найден
      */
     public String deleteProduct(int id) throws EntityException {
-        boolean result = productRepository.deleteProduct(id);
-        if (result) {
-            return "Продукт успешно удален";
+        if (!productRepository.existsById(id)) {
+            throw new EntityException("Продукт не был удален по причине не соответствия id продукту.");
         }
 
-        throw new EntityException("Продукт не был удален по причине не соответствия id продукту.");
+        productRepository.deleteById(id);
+        return "Продукт успешно удален";
     }
 }

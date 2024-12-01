@@ -1,6 +1,6 @@
 package service;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.repository.ProductRepository;
 import by.polikarpov.service.ProductService;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class ProductServiceTest {
+class ProductsServiceTest {
 
     @Mock
     private ProductRepository productRepository;
@@ -32,40 +32,52 @@ class ProductServiceTest {
 
     @Test
     void whenGetAllProductsThenReturnProductList() {
-        Product product1 = new Product(1, "Product 1", "Description 1", 10.0, true);
-        Product product2 = new Product(2, "Product 2", "Description 2", 20.0, false);
-        when(productRepository.getListProducts()).thenReturn(Arrays.asList(product1, product2));
+        Products products1 = new Products();
+        products1.setId(1);
+        products1.setName("Product 1");
+        products1.setDescription("Description 1");
+        products1.setPrice(10.0);
+        products1.setInStock(true);
+
+        Products products2 = new Products();
+        products2.setId(2);
+        products2.setName("Product 2");
+        products2.setDescription("Description 2");
+        products2.setPrice(20.0);
+        products2.setInStock(false);
+
+        when(productRepository.findAll()).thenReturn(Arrays.asList(products1, products2));
 
         assertThat(productService.getAllProducts()).hasSize(2);
     }
 
     @Test
     void whenGetProductByIdExistingIdThenReturnProduct() throws EntityException {
-        Product product = new Product(1, "Product 1", "Description 1", 10.0, true);
-        when(productRepository.getProductById(1)).thenReturn(Optional.of(product));
+        Products products = new Products();
+        products.setId(1);
+        products.setName("Product 1");
+        when(productRepository.findById(1)).thenReturn(Optional.of(products));
 
-        Product foundProduct = productService.getProductById(1);
+        Products foundProducts = productService.getProductById(1);
 
-        assertThat(foundProduct).isNotNull();
-        assertThat(foundProduct.getName()).isEqualTo("Product 1");
+        assertThat(foundProducts).isNotNull();
+        assertThat(foundProducts.getName()).isEqualTo("Product 1");
     }
 
     @Test
     void whenGetProductByIdNonExistingIdThenThrowEntityException() {
-        when(productRepository.getProductById(99)).thenReturn(Optional.empty());
+        when(productRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThrows(EntityException.class, () -> productService.getProductById(99), "Продукта по данному id не существует.");
     }
 
     @Test
     void whenCreateProductValidProductThenReturnProduct() throws EntityException {
-        Product product = new Product();
-        product.setName("Product 1");
+        Products products = new Products();
+        products.setName("Product 1");
 
-        when(productRepository.addProduct(product)).thenReturn(0);
-        when(productRepository.getProductById(0)).thenReturn(Optional.of(product));
-
-        Product createdProduct = productService.createProduct(product);
+        when(productRepository.save(products)).thenReturn(products);
+        Products createdProduct = productService.createProduct(products);
 
         assertThat(createdProduct).isNotNull();
         assertThat(createdProduct.getName()).isEqualTo("Product 1");
@@ -78,16 +90,22 @@ class ProductServiceTest {
 
     @Test
     void whenUpdateProductExistingProductThenReturnSuccessMessage() throws EntityException {
-        Product existingProduct = new Product(1, "Product 1", "Description 1", 10.0, true);
-        Product updatedProduct = new Product();
+        Products existingProduct = new Products();
+        existingProduct.setId(1);
+        existingProduct.setName("Product 1");
+
+        Products updatedProduct = new Products();
+        updatedProduct.setId(1);
         updatedProduct.setName("Updated Product");
-        updatedProduct.setDescription("Updated Description");
-        updatedProduct.setPrice(15.0);
-        updatedProduct.setInStock(false);
 
-        when(productRepository.getProductById(1)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.existsById(1)).thenReturn(true);
+        when(productRepository.save(any(Products.class))).thenAnswer(invocation -> {
+            Products productToSave = invocation.getArgument(0);
+            existingProduct.setName(productToSave.getName());
+            return existingProduct;
+        });
 
-        String response = productService.updateProduct(updatedProduct, 1);
+        String response = productService.updateProduct(updatedProduct);
 
         assertThat(response).isEqualTo("Продукт успешно обновлен");
         assertThat(existingProduct.getName()).isEqualTo("Updated Product");
@@ -95,22 +113,22 @@ class ProductServiceTest {
 
     @Test
     void whenUpdateProductNullProductThenThrowEntityException() {
-        assertThrows(EntityException.class, () -> productService.updateProduct(null, 1), "Невозможно обновить продукт: новый продукт не может быть пустым.");
+        assertThrows(EntityException.class, () -> productService.updateProduct(null), "Невозможно обновить продукт: новый продукт не может быть пустым.");
     }
 
     @Test
     void whenDeleteProductExistingIdThenReturnSuccessMessage() throws EntityException {
-        when(productRepository.deleteProduct(1)).thenReturn(true);
+        when(productRepository.existsById(1)).thenReturn(true);
 
         String response = productService.deleteProduct(1);
 
         assertThat(response).isEqualTo("Продукт успешно удален");
-        verify(productRepository, times(1)).deleteProduct(1); // Проверяем, что метод был вызван
+        verify(productRepository, times(1)).deleteById(1);
     }
 
     @Test
     void whenDeleteProductNonExistingIdThenThrowEntityException() {
-        when(productRepository.deleteProduct(99)).thenReturn(false);
+        when(productRepository.existsById(99)).thenReturn(false);
 
         assertThrows(EntityException.class, () -> productService.deleteProduct(99), "Продукт не был удален по причине не соответствия id продукту.");
     }

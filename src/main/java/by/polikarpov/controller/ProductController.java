@@ -1,7 +1,7 @@
 package by.polikarpov.controller;
 
 import by.polikarpov.dto.ResponseMessageDto;
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.service.ProductService;
 import jakarta.validation.Valid;
@@ -36,8 +36,8 @@ public class ProductController {
      * @return список продуктов
      */
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+    public ResponseEntity<List<Products>> getAllProducts() {
+        List<Products> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 
@@ -49,35 +49,33 @@ public class ProductController {
      * @throws EntityException если продукт не найден
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) throws EntityException {
-        Product product = productService.getProductById(id);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<Products> getProductById(@PathVariable int id) throws EntityException {
+        Products products = productService.getProductById(id);
+        return ResponseEntity.ok(products);
     }
 
     /**
      * Создает новый продукт.
      *
-     * @param product продукт для создания
+     * @param products продукт для создания
      * @return созданный продукт
      */
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid Product product) throws EntityException {
-        Product createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    public ResponseEntity<Products> createProduct(@RequestBody @Valid Products products) throws EntityException {
+        Products createdProducts = productService.createProduct(products);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProducts);
     }
 
     /**
      * Обновляет информацию о продукте.
      *
-     * @param id идентификатор продукта для обновления
-     * @param product объект продукта с обновленными данными
+     * @param products объект продукта с обновленными данными
      * @return сообщение об успешном обновлении продукта
      * @throws EntityException если продукт не найден или недопустимый
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessageDto> updateProduct(@PathVariable int id,
-                                                            @RequestBody @Valid Product product) throws EntityException {
-        String responseMessage = productService.updateProduct(product, id);
+    @PutMapping
+    public ResponseEntity<ResponseMessageDto> updateProduct(@RequestBody @Valid Products products) throws EntityException {
+        String responseMessage = productService.updateProduct(products);
         return ResponseEntity.ok(new ResponseMessageDto(responseMessage));
     }
 
