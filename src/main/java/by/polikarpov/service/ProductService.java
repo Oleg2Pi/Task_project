@@ -1,6 +1,6 @@
 package by.polikarpov.service;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class ProductService {
      *
      * @return список продуктов
      */
-    public List<Product> getAllProducts() {
+    public List<Products> getAllProducts() {
         return productRepository.getListProducts();
     }
 
@@ -41,7 +41,7 @@ public class ProductService {
      * @return продукт
      * @throws EntityException если продукт не найден
      */
-    public Product getProductById(int id) throws EntityException {
+    public Products getProductById(int id) throws EntityException {
         return productRepository.getProductById(id)
                 .orElseThrow(() -> new EntityException("Продукта по данному id не существует."));
     }
@@ -49,16 +49,16 @@ public class ProductService {
     /**
      * Создает новый продукт.
      *
-     * @param product продукт для создания
+     * @param products продукт для создания
      * @return сообщение об успешном создании продукта
      * @throws EntityException если продукт пустой или уже существует
      */
-    public Product createProduct(Product product) throws EntityException {
-        if (product == null) {
+    public Products createProduct(Products products) throws EntityException {
+        if (products == null) {
             throw new EntityException("Продукт не может быть пустым");
         }
 
-        int result = productRepository.addProduct(product);
+        int result = productRepository.addProduct(products);
         if (result != -1) {
             return getProductById(result);
         }
@@ -70,21 +70,21 @@ public class ProductService {
     /**
      * Обновляет информацию о существующем продукте.
      *
-     * @param product новый продукт с обновленной информацией
+     * @param products новый продукт с обновленной информацией
      * @param id      идентификатор продукта для обновления
      * @return сообщение об успешном обновлении продукта
      * @throws EntityException если продукт не найден или новый продукт пустой
      */
-    public String updateProduct(Product product, int id) throws EntityException {
-        if (product == null) {
+    public String updateProduct(Products products, int id) throws EntityException {
+        if (products == null) {
             throw new EntityException("Невозможно обновить продукт: новый продукт не может быть пустым.");
         }
 
-        Product existingProduct = getProductById(id);
-        existingProduct.setName(product.getName());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setInStock(product.isInStock());
+        Products existingProducts = getProductById(id);
+        existingProducts.setName(products.getName());
+        existingProducts.setDescription(products.getDescription());
+        existingProducts.setPrice(products.getPrice());
+        existingProducts.setInStock(products.isInStock());
 
         return "Продукт успешно обновлен";
 

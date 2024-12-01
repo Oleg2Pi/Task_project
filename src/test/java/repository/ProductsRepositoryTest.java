@@ -1,6 +1,6 @@
 package repository;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductRepositoryTest {
+class ProductsRepositoryTest {
 
     private ProductRepository repo;
 
@@ -21,10 +21,10 @@ class ProductRepositoryTest {
 
     @Test
     void whenAddProductThenProductShouldBeAdded() {
-        Product product = new Product();
-        product.setName("Product 1");
+        Products products = new Products();
+        products.setName("Product 1");
 
-        Integer productId = repo.addProduct(product);
+        Integer productId = repo.addProduct(products);
 
         assertThat(productId).isZero();
         assertThat(repo.getListProducts()).hasSize(1);
@@ -32,11 +32,11 @@ class ProductRepositoryTest {
 
     @Test
     void whenGetProductByIdThenShouldReturnProduct() {
-        Product product = new Product();
-        product.setName("Product 1");
-        repo.addProduct(product);
+        Products products = new Products();
+        products.setName("Product 1");
+        repo.addProduct(products);
 
-        Optional<Product> foundProduct = repo.getProductById(0);
+        Optional<Products> foundProduct = repo.getProductById(0);
 
         assertThat(foundProduct).isPresent();
         assertThat(foundProduct.get().getName()).isEqualTo("Product 1");
@@ -44,20 +44,20 @@ class ProductRepositoryTest {
 
     @Test
     void whenGetProductByIdInvalidIdThenShouldReturnEmptyOptional() {
-        Optional<Product> foundProduct = repo.getProductById(99);
+        Optional<Products> foundProduct = repo.getProductById(99);
 
         assertThat(foundProduct).isNotPresent();
     }
 
     @Test
     void whenDeleteProductValidIdThenProductShouldBeDeleted() {
-        Product product1 = new Product();
-        product1.setName("Product 1");
-        repo.addProduct(product1);
+        Products products1 = new Products();
+        products1.setName("Product 1");
+        repo.addProduct(products1);
 
-        Product product2 = new Product();
-        product2.setName("Product 2");
-        repo.addProduct(product2);
+        Products products2 = new Products();
+        products2.setName("Product 2");
+        repo.addProduct(products2);
 
         boolean isDeleted = repo.deleteProduct(0);
 
@@ -81,11 +81,11 @@ class ProductRepositoryTest {
 
     @Test
     void whenAddDuplicateProductThenShouldReturnMinusOne() {
-        Product product = new Product();
-        product.setName("Product 1");
+        Products products = new Products();
+        products.setName("Product 1");
 
-        repo.addProduct(product);
-        Integer productId = repo.addProduct(product);
+        repo.addProduct(products);
+        Integer productId = repo.addProduct(products);
 
         assertThat(productId).isEqualTo(-1);
     }

@@ -1,6 +1,6 @@
 package service;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.repository.ProductRepository;
 import by.polikarpov.service.ProductService;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class ProductServiceTest {
+class ProductsServiceTest {
 
     @Mock
     private ProductRepository productRepository;
@@ -32,22 +32,22 @@ class ProductServiceTest {
 
     @Test
     void whenGetAllProductsThenReturnProductList() {
-        Product product1 = new Product(1, "Product 1", "Description 1", 10.0, true);
-        Product product2 = new Product(2, "Product 2", "Description 2", 20.0, false);
-        when(productRepository.getListProducts()).thenReturn(Arrays.asList(product1, product2));
+        Products products1 = new Products(1, "Product 1", "Description 1", 10.0, true);
+        Products products2 = new Products(2, "Product 2", "Description 2", 20.0, false);
+        when(productRepository.getListProducts()).thenReturn(Arrays.asList(products1, products2));
 
         assertThat(productService.getAllProducts()).hasSize(2);
     }
 
     @Test
     void whenGetProductByIdExistingIdThenReturnProduct() throws EntityException {
-        Product product = new Product(1, "Product 1", "Description 1", 10.0, true);
-        when(productRepository.getProductById(1)).thenReturn(Optional.of(product));
+        Products products = new Products(1, "Product 1", "Description 1", 10.0, true);
+        when(productRepository.getProductById(1)).thenReturn(Optional.of(products));
 
-        Product foundProduct = productService.getProductById(1);
+        Products foundProducts = productService.getProductById(1);
 
-        assertThat(foundProduct).isNotNull();
-        assertThat(foundProduct.getName()).isEqualTo("Product 1");
+        assertThat(foundProducts).isNotNull();
+        assertThat(foundProducts.getName()).isEqualTo("Product 1");
     }
 
     @Test
@@ -59,16 +59,16 @@ class ProductServiceTest {
 
     @Test
     void whenCreateProductValidProductThenReturnProduct() throws EntityException {
-        Product product = new Product();
-        product.setName("Product 1");
+        Products products = new Products();
+        products.setName("Product 1");
 
-        when(productRepository.addProduct(product)).thenReturn(0);
-        when(productRepository.getProductById(0)).thenReturn(Optional.of(product));
+        when(productRepository.addProduct(products)).thenReturn(0);
+        when(productRepository.getProductById(0)).thenReturn(Optional.of(products));
 
-        Product createdProduct = productService.createProduct(product);
+        Products createdProducts = productService.createProduct(products);
 
-        assertThat(createdProduct).isNotNull();
-        assertThat(createdProduct.getName()).isEqualTo("Product 1");
+        assertThat(createdProducts).isNotNull();
+        assertThat(createdProducts.getName()).isEqualTo("Product 1");
     }
 
     @Test
@@ -78,19 +78,19 @@ class ProductServiceTest {
 
     @Test
     void whenUpdateProductExistingProductThenReturnSuccessMessage() throws EntityException {
-        Product existingProduct = new Product(1, "Product 1", "Description 1", 10.0, true);
-        Product updatedProduct = new Product();
-        updatedProduct.setName("Updated Product");
-        updatedProduct.setDescription("Updated Description");
-        updatedProduct.setPrice(15.0);
-        updatedProduct.setInStock(false);
+        Products existingProducts = new Products(1, "Product 1", "Description 1", 10.0, true);
+        Products updatedProducts = new Products();
+        updatedProducts.setName("Updated Product");
+        updatedProducts.setDescription("Updated Description");
+        updatedProducts.setPrice(15.0);
+        updatedProducts.setInStock(false);
 
-        when(productRepository.getProductById(1)).thenReturn(Optional.of(existingProduct));
+        when(productRepository.getProductById(1)).thenReturn(Optional.of(existingProducts));
 
-        String response = productService.updateProduct(updatedProduct, 1);
+        String response = productService.updateProduct(updatedProducts, 1);
 
         assertThat(response).isEqualTo("Продукт успешно обновлен");
-        assertThat(existingProduct.getName()).isEqualTo("Updated Product");
+        assertThat(existingProducts.getName()).isEqualTo("Updated Product");
     }
 
     @Test

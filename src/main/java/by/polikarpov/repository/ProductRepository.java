@@ -1,6 +1,6 @@
 package by.polikarpov.repository;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Component
 public class ProductRepository {
 
-    private List<Product> products;
+    private List<Products> products;
 
     /**
      * Инициализирует список продуктов после создания бина.
@@ -33,7 +33,7 @@ public class ProductRepository {
      *
      * @return список продуктов
      */
-    public List<Product> getListProducts() {
+    public List<Products> getListProducts() {
         return new ArrayList<>(products);
     }
 
@@ -43,7 +43,7 @@ public class ProductRepository {
      * @param id идентификатор продукта
      * @return объект Optional, содержащий продукт, если он найден, иначе пустой Optional
      */
-    public Optional<Product> getProductById(int id) {
+    public Optional<Products> getProductById(int id) {
         if (id >= 0 && id < products.size()) {
             return Optional.ofNullable(products.get(id));
         }
@@ -54,14 +54,14 @@ public class ProductRepository {
     /**
      * Добавляет новый продукт в список.
      *
-     * @param product продукт, который необходимо добавить
+     * @param products продукт, который необходимо добавить
      * @return true, если продукт был успешно добавлен; false, если продукт уже существует или является null
      */
-    public Integer addProduct(Product product) {
-        if (product != null && !products.contains(product)) {
-            products.add(product);
-            product.setId(products.size() - 1);
-            return product.getId();
+    public Integer addProduct(Products products) {
+        if (products != null && !this.products.contains(products)) {
+            this.products.add(products);
+            products.setId(this.products.size() - 1);
+            return products.getId();
         }
 
         return -1;
@@ -78,8 +78,8 @@ public class ProductRepository {
             products.remove(id);
 
             for (int i = id; i < products.size(); i++) {
-                Product product = products.get(i);
-                product.setId(i);
+                Products products = this.products.get(i);
+                products.setId(i);
             }
 
             return true;

@@ -1,6 +1,6 @@
 package entity;
 
-import by.polikarpov.entity.Product;
+import by.polikarpov.entity.Products;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductTest {
+class ProductsTest {
 
     private Validator validator;
 
@@ -24,22 +24,22 @@ class ProductTest {
 
     @Test
     void whenValidProductThenNoConstraintViolations() {
-        Product product = new Product(1, "Valid Product", "This is a valid description", 10.0, true);
+        Products products = new Products(1, "Valid Product", "This is a valid description", 10.0, true);
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).isEmpty();
-        assertThat(product.getName()).isEqualTo("Valid Product");
-        assertThat(product.getDescription()).isEqualTo("This is a valid description");
-        assertThat(product.getPrice()).isEqualTo(10.0);
-        assertThat(product.isInStock()).isTrue();
+        assertThat(products.getName()).isEqualTo("Valid Product");
+        assertThat(products.getDescription()).isEqualTo("This is a valid description");
+        assertThat(products.getPrice()).isEqualTo(10.0);
+        assertThat(products.isInStock()).isTrue();
     }
 
     @Test
     void whenProductWithBlankNameThenConstraintViolations() {
-        Product product = new Product(1, "", "Valid description", 10.0, true);
+        Products products = new Products(1, "", "Valid description", 10.0, true);
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).hasSize(1);
         assertThat(constraintViolations.iterator().next().getMessage()).isEqualTo("Название товара обязательно.");
@@ -48,9 +48,9 @@ class ProductTest {
     @Test
     void whenProductWithLongNameThenConstraintViolations() {
         String longName = "A".repeat(256);
-        Product product = new Product(1, longName, "Valid description", 10.0, true);
+        Products products = new Products(1, longName, "Valid description", 10.0, true);
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).hasSize(1);
         assertThat(constraintViolations.iterator().next().getMessage()).isEqualTo("Название товара не должно превышать 255 символов.");
@@ -58,9 +58,9 @@ class ProductTest {
 
     @Test
     void whenProductWithNegativePriceThenConstraintViolations() {
-        Product product = new Product(1, "Valid Product", "Valid description", -10.0, true);
+        Products products = new Products(1, "Valid Product", "Valid description", -10.0, true);
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).hasSize(1);
         assertThat(constraintViolations.iterator().next().getMessage()).isEqualTo("Цена товара не может быть меньше 0.");
@@ -69,24 +69,24 @@ class ProductTest {
     @Test
     void whenProductWithLongDescriptionThenNoConstraintViolations() {
         String longDescription = "A".repeat(4096);
-        Product product = Product.builder()
+        Products products = Products.builder()
                 .name("Valid Product")
                 .description(longDescription)
                 .build();
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).isEmpty();
-        assertThat(product.getPrice()).isEqualTo(0.0);
-        assertThat(product.isInStock()).isFalse();
+        assertThat(products.getPrice()).isEqualTo(0.0);
+        assertThat(products.isInStock()).isFalse();
     }
 
     @Test
     void whenProductWithTooLongDescriptionThenConstraintViolations() {
         String longDescription = "A".repeat(4097);
-        Product product = new Product(1, "Valid Product", longDescription, 10.0, true);
+        Products products = new Products(1, "Valid Product", longDescription, 10.0, true);
 
-        Set<ConstraintViolation<Product>> constraintViolations = validator.validate(product);
+        Set<ConstraintViolation<Products>> constraintViolations = validator.validate(products);
 
         assertThat(constraintViolations).hasSize(1);
         assertThat(constraintViolations.iterator().next().getMessage()).isEqualTo("Описание товара не должно превышать 4096 символов.");

@@ -1,5 +1,6 @@
 package by.polikarpov.entity;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,13 +16,21 @@ import lombok.NoArgsConstructor;
  * Содержит информацию о названии товара, его описании, цене и доступности на складе.
  * </p>
  */
-
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+public class Products {
 
+    /**
+     * Уникальный идентификатор товара.
+     * <p>
+     * Генерируется автоматически базой данных.
+     * </p>
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     /**
@@ -51,6 +60,7 @@ public class Product {
      * Доступность товара на складе.
      * Значение по умолчанию - false, что означает, что товар не доступен.
      */
+    @Column(name = "in_stock")
     @Builder.Default
     private boolean inStock = false;
 }
