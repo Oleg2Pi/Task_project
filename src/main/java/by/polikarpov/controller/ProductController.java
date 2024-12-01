@@ -28,39 +28,23 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) {
-        try {
-            return ResponseEntity.ok(productService.getProductById(id));
-        } catch (EntityException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Product> getProductById(@PathVariable int id) throws EntityException {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProduct(@RequestBody @Valid Product product) {
-        try {
-            return ResponseEntity.ok(productService.createProduct(product));
-        } catch (EntityException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<String> createProduct(@RequestBody @Valid Product product) throws EntityException {
+        return ResponseEntity.ok(productService.createProduct(product));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable int id,
-                                                @RequestBody @Valid Product product) {
-        try {
-            return ResponseEntity.ok(productService.updateProduct(product, id));
-        } catch (EntityException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+                                                @RequestBody @Valid Product product) throws EntityException {
+        return ResponseEntity.ok(productService.updateProduct(product, id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable int id) {
-        try {
-            return ResponseEntity.ok(productService.deleteProduct(id));
-        } catch (EntityException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<String> deleteProduct(@PathVariable int id) throws EntityException {
+        return ResponseEntity.ok(productService.deleteProduct(id));
     }
 }

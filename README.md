@@ -47,4 +47,8 @@
    3. ProductService:
       1. method createProduct - check product on null
       2. method updateProduct - sets fields from newProduct into existing
-8.
+8. Create class GlobalExceptionHandler and change in ProductController:
+      1. ProductController:
+         1. del try-catch and add exception in signature of methods
+      2. GlobalExceptionHandler:
+         1. create methods for error handling
