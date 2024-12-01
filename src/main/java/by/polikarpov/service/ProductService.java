@@ -33,6 +33,10 @@ public class ProductService {
     }
 
     public String createProduct(Product product) throws EntityException {
+        if (product == null) {
+            throw new EntityException("Продукт не может быть пустым");
+        }
+
         boolean result = productRepository.addProduct(product);
         if (result) {
             return "Продукт создан.";
@@ -42,8 +46,13 @@ public class ProductService {
     }
 
     public String updateProduct(Product product, int id) throws EntityException {
-        boolean result = productRepository.updateProduct(product, id);
-        if (result) {
+        Product existingProduct = getProductById(id);
+
+        if (existingProduct != null && product != null) {
+            existingProduct.setName(product.getName());
+            existingProduct.setDescription(product.getDescription());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setInStock(product.isInStock());
             return "Продукт успешно обновлен";
         }
 

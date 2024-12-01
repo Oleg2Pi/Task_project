@@ -40,4 +40,11 @@
       3. @PostMapping("/api/create") - create product with data (Product)
       4. @PutMapping("/api/{id}") - change product by id with data (newProduct)
       5. @DeleteMapping("/api/{id}") - delete product by id
-7. 
+7. Create application.properties, AppRunner for start project, change classes (ProductController, ProductRepository and ProductService):
+   1. ProductController - add @Valid for create and update methods
+   2. ProductRepository:
+      1. delete method updateProduct
+   3. ProductService:
+      1. method createProduct - check product on null
+      2. method updateProduct - sets fields from newProduct into existing
+8.

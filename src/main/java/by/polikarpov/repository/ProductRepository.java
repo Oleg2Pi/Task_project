@@ -39,15 +39,6 @@ public class ProductRepository {
         return false;
     }
 
-    public boolean updateProduct(Product newProduct, int id) {
-        if ((id >= 0 && id < products.size()) && newProduct != null) {
-            products.set(id, newProduct);
-            return true;
-        }
-
-        return false;
-    }
-
     public boolean deleteProduct(int id) {
         if (id >= 0 && id < products.size()) {
             products.remove(id);

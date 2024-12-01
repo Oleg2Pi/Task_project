@@ -3,6 +3,7 @@ package by.polikarpov.controller;
 import by.polikarpov.entity.Product;
 import by.polikarpov.exceptions.EntityException;
 import by.polikarpov.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createProduct(@RequestBody Product product) {
+    public ResponseEntity<String> createProduct(@RequestBody @Valid Product product) {
         try {
             return ResponseEntity.ok(productService.createProduct(product));
         } catch (EntityException e) {
@@ -45,7 +46,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProduct(@PathVariable int id, @RequestBody Product product) {
+    public ResponseEntity<String> updateProduct(@PathVariable int id,
+                                                @RequestBody @Valid Product product) {
         try {
             return ResponseEntity.ok(productService.updateProduct(product, id));
         } catch (EntityException e) {
