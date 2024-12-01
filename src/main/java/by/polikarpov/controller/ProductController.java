@@ -69,15 +69,13 @@ public class ProductController {
     /**
      * Обновляет информацию о продукте.
      *
-     * @param id идентификатор продукта для обновления
      * @param products объект продукта с обновленными данными
      * @return сообщение об успешном обновлении продукта
      * @throws EntityException если продукт не найден или недопустимый
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseMessageDto> updateProduct(@PathVariable int id,
-                                                            @RequestBody @Valid Products products) throws EntityException {
-        String responseMessage = productService.updateProduct(products, id);
+    @PutMapping
+    public ResponseEntity<ResponseMessageDto> updateProduct(@RequestBody @Valid Products products) throws EntityException {
+        String responseMessage = productService.updateProduct(products);
         return ResponseEntity.ok(new ResponseMessageDto(responseMessage));
     }
 

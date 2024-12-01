@@ -31,7 +31,7 @@ public class ProductService {
      * @return список продуктов
      */
     public List<Products> getAllProducts() {
-        return productRepository.getListProducts();
+        return productRepository.findAll();
     }
 
     /**
@@ -42,7 +42,7 @@ public class ProductService {
      * @throws EntityException если продукт не найден
      */
     public Products getProductById(int id) throws EntityException {
-        return productRepository.getProductById(id)
+        return productRepository.findById(id)
                 .orElseThrow(() -> new EntityException("Продукта по данному id не существует."));
     }
 
@@ -58,34 +58,27 @@ public class ProductService {
             throw new EntityException("Продукт не может быть пустым");
         }
 
-        int result = productRepository.addProduct(products);
-        if (result != -1) {
-            return getProductById(result);
-        }
+        return productRepository.save(products);
 
-        throw new EntityException("Продукт не был создан, возможны две причины: "
-                                  + "он уже был добавлен в хранилище, либо передан null");
     }
 
     /**
      * Обновляет информацию о существующем продукте.
      *
-     * @param products новый продукт с обновленной информацией
-     * @param id      идентификатор продукта для обновления
+     * @param product новый продукт с обновленной информацией
      * @return сообщение об успешном обновлении продукта
      * @throws EntityException если продукт не найден или новый продукт пустой
      */
-    public String updateProduct(Products products, int id) throws EntityException {
-        if (products == null) {
+    public String updateProduct(Products product) throws EntityException {
+        if (product == null) {
             throw new EntityException("Невозможно обновить продукт: новый продукт не может быть пустым.");
         }
 
-        Products existingProducts = getProductById(id);
-        existingProducts.setName(products.getName());
-        existingProducts.setDescription(products.getDescription());
-        existingProducts.setPrice(products.getPrice());
-        existingProducts.setInStock(products.isInStock());
+        if (!productRepository.existsById(product.getId())){
+            throw new EntityException("Продукта с данным id не существует.");
+        }
 
+        productRepository.save(product);
         return "Продукт успешно обновлен";
 
     }
@@ -98,11 +91,11 @@ public class ProductService {
      * @throws EntityException если продукт не найден
      */
     public String deleteProduct(int id) throws EntityException {
-        boolean result = productRepository.deleteProduct(id);
-        if (result) {
-            return "Продукт успешно удален";
+        if (!productRepository.existsById(id)) {
+            throw new EntityException("Продукт не был удален по причине не соответствия id продукту.");
         }
 
-        throw new EntityException("Продукт не был удален по причине не соответствия id продукту.");
+        productRepository.deleteById(id);
+        return "Продукт успешно удален";
     }
 }
