@@ -28,4 +28,7 @@
    3. price = 0 by default
    4. inStock = false by default
    5. add annotation @Builder
-4. 
+4. Create directory "repository" and Class "ProductRepository":
+   1. create List collection
+   2. create crud methods
+5. 
