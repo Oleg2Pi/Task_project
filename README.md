@@ -53,3 +53,9 @@
       2. GlobalExceptionHandler:
          1. create methods for error handling
 9. Create ResponseMessageDto for response and refactoring + write javadoc, add id in Product
+10. Add JUnit in pom.xml and create JUnit tests for classes (ProductRepositoryTest, ProductServiceTest and ProductTest):
+    1. pom.xml:
+       1. add junit-jupiter-engine
+       2. add assertj-core
+       3. add mockito-core
+    2. create ProductRepositoryTest, ProductServiceTest and ProductTest
