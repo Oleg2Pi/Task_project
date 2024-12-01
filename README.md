@@ -31,4 +31,6 @@
 4. Create directory "repository" and Class "ProductRepository":
    1. create List collection
    2. create crud methods
-5. 
+5. Create directories "exceptions and service" and classes "EntityException and ProductService":
+   1. create crud methods in service
+6. 
