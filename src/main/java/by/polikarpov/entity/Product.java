@@ -8,21 +8,49 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Класс, представляющий товар с его основными атрибутами.
+ * <p>
+ * Содержит информацию о названии товара, его описании, цене и доступности на складе.
+ * </p>
+ */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Product {
 
+    private int id;
+
+    /**
+     * Название товара.
+     * Должно быть заполнено и не превышать 255 символов.
+     */
     @NotBlank(message = "Название товара обязательно.")
     @Size(max = 255, message = "Название товара не должно превышать 255 символов.")
     private String name;
 
+    /**
+     * Описание товара.
+     * Может содержать дополнительную информацию о товаре и не должно превышать 4096 символов.
+     */
     @Size(max = 4096, message = "Описание товара не должно превышать 4096 символов.")
     private String description;
 
+    /**
+     * Цена товара.
+     * Не может быть меньше 0. Значение по умолчанию - 0.0.
+     */
     @DecimalMin(value = "0", message = "Цена товара не может быть меньше 0.")
-    private double price = 0;
+    @Builder.Default
+    private double price = 0.0;
 
+    /**
+     * Доступность товара на складе.
+     * Значение по умолчанию - false, что означает, что товар не доступен.
+     */
+    @Builder.Default
     private boolean inStock = false;
 }

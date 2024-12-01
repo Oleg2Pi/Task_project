@@ -7,8 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Сервис для управления продуктами.
+ * <p>
+ * Этот класс предоставляет методы для работы с продуктами, включая
+ * добавление, обновление, получение и удаление продуктов.
+ * </p>
+ */
 @Service
 public class ProductService {
 
@@ -19,46 +25,78 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    /**
+     * Получает список всех продуктов.
+     *
+     * @return список продуктов
+     */
     public List<Product> getAllProducts() {
         return productRepository.getListProducts();
     }
 
+    /**
+     * Получает продукт по его идентификатору.
+     *
+     * @param id идентификатор продукта
+     * @return продукт
+     * @throws EntityException если продукт не найден
+     */
     public Product getProductById(int id) throws EntityException {
-        Optional<Product> product = productRepository.getProductById(id);
-        if (product.isPresent()) {
-            return product.get();
-        } else {
-            throw new EntityException("Продукта по данному id не существует.");
-        }
+        return productRepository.getProductById(id)
+                .orElseThrow(() -> new EntityException("Продукта по данному id не существует."));
     }
 
-    public String createProduct(Product product) throws EntityException {
+    /**
+     * Создает новый продукт.
+     *
+     * @param product продукт для создания
+     * @return сообщение об успешном создании продукта
+     * @throws EntityException если продукт пустой или уже существует
+     */
+    public Product createProduct(Product product) throws EntityException {
         if (product == null) {
             throw new EntityException("Продукт не может быть пустым");
         }
 
-        boolean result = productRepository.addProduct(product);
-        if (result) {
-            return "Продукт создан.";
+        int result = productRepository.addProduct(product);
+        if (result != -1) {
+            return getProductById(result);
         }
 
-        throw new EntityException("Продукт не был создан, возможны две причины: он уже был добавлен в хранилище, либо он создан");
+        throw new EntityException("Продукт не был создан, возможны две причины: "
+                                  + "он уже был добавлен в хранилище, либо передан null");
     }
 
+    /**
+     * Обновляет информацию о существующем продукте.
+     *
+     * @param product новый продукт с обновленной информацией
+     * @param id      идентификатор продукта для обновления
+     * @return сообщение об успешном обновлении продукта
+     * @throws EntityException если продукт не найден или новый продукт пустой
+     */
     public String updateProduct(Product product, int id) throws EntityException {
-        Product existingProduct = getProductById(id);
-
-        if (existingProduct != null && product != null) {
-            existingProduct.setName(product.getName());
-            existingProduct.setDescription(product.getDescription());
-            existingProduct.setPrice(product.getPrice());
-            existingProduct.setInStock(product.isInStock());
-            return "Продукт успешно обновлен";
+        if (product == null) {
+            throw new EntityException("Невозможно обновить продукт: новый продукт не может быть пустым.");
         }
 
-        throw new EntityException("Продукт не был обновлен, возможны две причины: id не соответствует продукту, либо передаваемый продукт не создан");
+        Product existingProduct = getProductById(id);
+        existingProduct.setName(product.getName());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setInStock(product.isInStock());
+
+        return "Продукт успешно обновлен";
+
     }
 
+    /**
+     * Удаляет продукт по его идентификатору.
+     *
+     * @param id идентификатор продукта для удаления
+     * @return сообщение об успешном удалении продукта
+     * @throws EntityException если продукт не найден
+     */
     public String deleteProduct(int id) throws EntityException {
         boolean result = productRepository.deleteProduct(id);
         if (result) {
