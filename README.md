@@ -33,4 +33,11 @@
    2. create crud methods
 5. Create directories "exceptions and service" and classes "EntityException and ProductService":
    1. create crud methods in service
-6. 
+6. Create directory "controller" and class "ProductController":
+   1. create methods:
+      1. @GetMapping("/api") - get all products
+      2. @GetMapping("/api/{id}") - get product by id
+      3. @PostMapping("/api/create") - create product with data (Product)
+      4. @PutMapping("/api/{id}") - change product by id with data (newProduct)
+      5. @DeleteMapping("/api/{id}") - delete product by id
+7. 
